@@ -1,0 +1,544 @@
+---
+title: "Comparison of calibrated projection score equating and equipercentile score equating"
+author: "Sangdon Lim"
+output: 
+  revealjs::revealjs_presentation:
+    theme: night
+    highlight: zenburn
+    transition: none
+    self_contained: true
+    css: slides.css
+    reveal_options:
+      slideNumber: "c/t"
+editor_options: 
+  chunk_output_type: console
+bibliography: irt.bib
+csl: apa.csl
+---
+  
+```{r, echo = FALSE, message = FALSE}
+library(mirt)
+library(mirtCAT)
+library(PROsetta)
+library(kableExtra)
+library(mvnfast)
+
+root <- rprojroot::find_rstudio_root_file()
+```
+
+# Introduction
+
+*Scale linking* vs *Score equating*
+
+# Scale linking
+
+*Scale linking* is achieved when
+
+* a set of item parameters $z$
+* is on the same metric of
+* another set of anchor item parameters $z'$
+
+</br>
+
+Notation
+
+$z$ : the set of item parameters (e.g. discrimination, difficulty, ...)
+
+# Scale linking
+
+Suppose we have a response dataset $\mathbf{X}$ with
+
+* items $a_1 ... a_{10}$ from scale $a$
+
+</br>
+
+Through item parameter calibration on $\mathbf{X}$, we can obtain
+
+* item parameters $z_a$ for items $a_1 ... a_{10}$
+
+# Scale linking
+
+Suppose we have another dataset $\mathbf{X'}$ with
+
+* items $a_1 ... a_{10}$ from scale $a$
+* items $b_1 ... b_{10}$ from scale $b$
+
+Let the item parameters from this dataset be denoted by $z'_a$ and $z'_b$
+
+Without conversion, $z'_a$ is on a different metric compared to $z_a$
+
+* because $\mathbf{X'}$ comes from a different ability range compared to $\mathbf{X}$
+
+# Scale linking
+
+Scale linking is achieved when $z'_a$ is on the same metric of $z_a$
+
+* this makes $z'_a$ comparable with $z_a$
+* this makes $z'_b$ interpretable on the metric of $z_b$ as if it was from $\mathbf{X}$
+
+# Scale linking
+
+Scale linking methods include
+
+*Linear transformation*
+
+* find a function $f: z' \rightarrow z$ that converts $z'_a$ to the metric of $z_a$
+* once $f$ is determined, $f$ can be used to convert $z'_b$ to $z_b$
+* Haebara method [-@haebara_equating_1980]
+* Stocking-Lord method [-@stocking_developing_1983]
+
+# Scale linking
+
+Scale linking methods include
+
+*Fixed-parameter calibration*
+
+* Item calibration phase on $\mathbf{X'}$ is modified
+* $z' = \{z'_a, z'_b\}$ is estimated subject to the constraint $z'_a = z_a$
+* $z' = \{z'_a, z'_b\}$ is obtained so that $z'_a$ is on the same metric of $z_a$
+* This achieves scale link
+* Further metric conversions should not be done
+* Because further altering the metric breaks link
+
+# Score equating
+
+*Score equating* is achieved when
+
+* a set of score levels on a scale
+* is mapped to corresponding score levels
+* on the metric of the score levels on another scale
+
+# Score equating
+
+Suppose that we have
+
+* scale $a$ with scores $x_a$ ranging in $[0, 10]$
+* scale $b$ with scores $x_b$ ranging in $[0, 100]$
+
+<br>
+
+Scores $x_a$ and $x_b$ are on different metrics
+
+# Score equating
+
+Given a score $x_a = 5$
+
+* one may define a corresponding score $x'_b$ on scale $b$
+* so that $x'_b$ can be compared with $x_b$
+
+<br>
+
+Score equating is the process of determining
+
+* the map $f: x_a \rightarrow x'_b$ for all $x_a$ levels
+
+# Score equating
+
+Equipercentile equating is a method of score equating
+
+* scores of scale $a$ are mapped onto the percentile $p$ metric
+* and then onto the metric of scale $b$
+* so that $x_a \rightarrow p \rightarrow x'_b$
+
+The process does not involve item parameters
+
+* only involves observed scores $x_a$ and $x_b$
+
+# Score equating
+
+Equipercentile equating may be modified to get standardized scores
+
+* scores of scale $a$ are mapped onto the percentile $p$ metric
+* and then onto the $\theta$ metric
+* so that $x_a \rightarrow p \rightarrow \theta$
+
+To accomplish this,
+
+* scale $b$ scores are mapped onto the $\theta$ metric
+* using a presupplied set of item parameters for scale $b$
+* the item parameters may be obtained from free calibration or converted with scale linking as needed
+
+# Score equating
+
+The end product of score equating is a crosswalk table
+
+```{r, echo = FALSE}
+scaleb <- (0:10) * 9.1 + 5
+tscore <- log((0:10) + 5)*20+10
+theta  <- (tscore - 50) / 10
+tmp    <- cbind(0:10, scaleb, theta, tscore)
+
+kable(tmp,
+  col.names = c("Scale A (raw)", "Scale B (raw)", "Scale B (theta)", "Scale B (T-score)"),
+  digits = 3) %>%
+  kable_styling()
+```
+
+# Summary
+
+*Scale linking* is about the metrics of item parameters
+
+*Score equating* is about the metrics of observed scores
+
+# Calibrated projection
+
+*Calibrated projection* [CP; @thissen_using_2011] is a procedure for mapping the score levels between two scales
+
+* maps each score level in scale $a$ onto a corresponding $\theta$ in scale $b$
+* Lord-Wingersky recursion [-@lord_comparison_1984] is the standard method
+
+<br>
+
+* the objective is related to the metrics of scores
+* not to the metrics of item parameters
+* thus CP can be considered as a score equating method
+
+# Calibrated projection
+
+Suppose that we have a response dataset $\mathbf{X}$ with
+
+* scale $a$ with items $a_1 ... a_{10}$
+* scale $b$ with items $b_1 ... b_{10}$
+
+A 2-factor IRT model is fitted onto the response dataset $\mathbf{X}$
+
+# Calibrated projection
+
+```{r eval = FALSE}
+model <- mirt.model("
+  F1  =  1-10  # free estimation for scale a items
+  F2  = 11-20  # free estimation for scale b items
+  COV = F1*F2
+")
+
+cp_calib <- mirt(X, model, itemtype = 'graded')
+```
+
+First discrimination parameter
+
+* is freely estimated for scale $a$ items; fixed at $0$ for other scales
+
+Second discrimination parameter
+
+* is freely estimated for scale $b$ items; fixed at $0$ for other scales
+
+Other item parameters are freely estimated as usual
+
+The correlation between factors are freely estimated
+
+# Calibrated projection
+
+Calibrated model can be used to produce a crosswalk table
+
+* Lord-Wingersky recursion [-@lord_comparison_1984] is the standard method
+* requires multidimensional extension to apply to CP
+
+<br>
+
+In @thissen_using_2011, the authors presented a table
+
+* raw scores in PedsQL scale are mapped onto T-scores in PAIS scale
+
+# Calibrated projection
+
+Table 4 @thissen_using_2011
+
+```{r, echo = FALSE, fig.align = 'center', dev.args = list(bg = "transparent")}
+d  <- read.csv(file.path(root, "final/table4.csv"))
+x  <- d[, 1]
+y  <- d[, 2]
+yu <- d[, 2] + d[, 3]
+yl <- d[, 2] - d[, 3]
+
+plot(
+  x, y, type = "n",
+  ylim = c(20, 90),
+  xlab = "PedsQL (raw)", ylab = "PAIS (T-score)"
+)
+lines(x, y , col = "magenta")
+lines(x, yu, col = "magenta", lty = 2)
+lines(x, yl, col = "magenta", lty = 2)
+```
+
+# Calibrated projection
+
+Table 4 (reproduced)
+
+```{r lw_demo_all, echo = FALSE, cache = TRUE, code = readLines("CP_demo_all.R")}
+```
+
+```{r, echo = FALSE, fig.align = 'center', dev.args = list(bg = "transparent")}
+d  <- out
+x  <- d[, 1]
+y  <- d[, 2]
+yu <- d[, 2] + d[, 3]
+yl <- d[, 2] - d[, 3]
+
+plot(
+  x, y, type = "n",
+  ylim = c(20, 90),
+  xlab = "PedsQL (raw)", ylab = "PAIS (T-score)"
+)
+lines(x, y , col = "magenta")
+lines(x, yu, col = "magenta", lty = 2)
+lines(x, yl, col = "magenta", lty = 2)
+```
+
+# Calibrated projection
+
+Step 1. Read in item parameters
+
+```{r lw_demo_data, echo = TRUE, code = readLines("CP_demo_read.R")}
+```
+
+* Tables 2, 3 from @thissen_using_2011
+
+# Calibrated projection
+
+Step 2. Initialize theta grid for multidimensional integration
+
+```{r lw_demo_grid, echo = TRUE, code = readLines("grid.R")}
+```
+
+* Used -4.5(0.2)4.5 for each dimension, fully crossed
+* Total # of quadrature points: `r n_grid`
+* Should use other ways of integration with more dimensions
+
+# Calibrated projection
+
+Step 3. Function for getting category probability
+
+```{r lw_demo_calcprob, echo = TRUE, code = readLines("calcLevelProb.R")}
+```
+
+* input: item pool, 2D $\theta$, item ID, score level on that item
+* output: a single probability value
+* necessary for multidimensional Lord-Wingersky recursion
+
+# Calibrated projection
+
+Step 4. Lord-Wingersky recursion (multidimensional extension)
+
+```{r lw_demo, echo = TRUE, code = readLines("LWrecursion.R")}
+```
+
+# Calibrated projection
+
+Step 4. Lord-Wingersky recursion (multidimensional extension)
+
+* input: item pool, items to use, theta grid
+* output: for each possible score level, likelihood value of obtaining the score level at each quadrature point
+
+```{r lw_demo_run, echo = TRUE, cache = TRUE, code = readLines("CP_demo_LW.R")}
+```
+
+Use PedsQL items
+
+* range of possible score levels: $[0, 44]$
+* likelihood of obtaining score $0$ at each of `r n_grid` quadrature points
+* likelihood of obtaining score $1$ at each of `r n_grid` quadrature points
+* ...
+* likelihood of obtaining score $44$ at each of `r n_grid` quadrature points
+
+# Calibrated projection
+
+Step 5. Compute EAP estimates from likelihoods
+
+* input: likelihoods, theta grid, latent correlation
+* output: EAP estimates and covariance matrix for each score level
+
+```{r lw_demo_eap, echo = TRUE, code = readLines("LtoEAP.R")}
+```
+
+# Calibrated projection
+
+Step 5. Compute EAP estimates from likelihoods
+
+* estimated correlation $.96$ is used here
+
+```{r lw_demo_eap_run, echo = TRUE, cache = TRUE, code = readLines("CP_demo_EAP.R")}
+```
+
+# Calibrated projection
+
+Step 5. Compute EAP estimates from likelihoods
+
+* the equations were adapted from @bryant_expected_2005
+
+# Calibrated projection
+
+Given a $k$-dimensional vector $\theta$,
+
+the $k$-dimensional EAP estimate given a score level $x$ is 
+
+$$\mathrm{E}(\theta|x) = 
+\frac{\int{\theta \mathrm{L}(x|\theta) f(\theta,\Sigma) d\theta}}
+{\int{\mathrm{L}(x|\theta) f(\theta,\Sigma) d\theta}}$$
+
+approximated by 
+
+$$\mathrm{E}(\theta|x) =
+\frac{\sum{\theta \mathrm{L}(x|\theta) f(\theta,\Sigma)}}
+{\sum{\mathrm{L}(x|\theta) f(\theta,\Sigma)}}$$
+
+* $\mathrm{L}(x|\theta)$: previously computed likelihood
+* $f(\theta, \Sigma)$: multivariate normal density value
+* $\Sigma$: the 2D correlation matrix
+
+The summation is taken over all $\theta$ grid
+
+# Calibrated projection
+
+Given a $k$-dimensional vector $\theta$,
+
+the $k$-dimensional EAP covariance given a score level $x$ is
+
+$$\mathrm{C}(\theta|x) =
+\frac{\int{\mathrm{C}(\theta) \mathrm{L}(x|\theta) f(\theta,\Sigma) d\theta}}
+{\int{\mathrm{L}(x|\theta) f(\theta,\Sigma) d\theta}}$$
+approximated by 
+
+$$\mathrm{C}(\theta|x) =
+\frac{\sum{\mathrm{C}(\theta) \mathrm{L}(x|\theta) f(\theta,\Sigma)}}
+{\sum{\mathrm{L}(x|\theta) f(\theta,\Sigma)}}$$
+
+* $\mathrm{C}(\theta)$: variance-covariance matrix $(\theta - \theta_\mathrm{EAP})(\theta - \theta_\mathrm{EAP})'$
+
+The summation is taken over all $\theta$ grid
+
+# Calibrated projection
+
+Step 6. Aggregate into a table
+
+```{r lw_demo_table, echo = TRUE, cache = TRUE, code = readLines("EAPtoTABLE.R")}
+```
+
+```{r lw_demo_table_run, echo = TRUE, cache = TRUE, code = readLines("CP_demo_table.R")}
+```
+
+# Calibrated projection
+
+It should be emphasized that the focus of CP method is not the item parameters
+
+* focus is on the latent correlation and its use in producing a score map
+
+The correlation between two factors represent the relationship between two scales
+
+* using this information, obtaining multidimensional EAP $\theta$ estimate yields $\theta$ estimate on scale $a$ and scale $b$ simulataneously
+
+# Motivation
+
+Advantage of CP over EQP:
+
+* CP takes the correlation between constructs explicitly into account
+
+<br>
+
+If the latent correlation is perfect, CP and EQP should perform similar in terms of producing T-scores
+
+As latent correlation decreases, CP should perform better than EQP
+
+<br>
+
+Question: by how much?
+
+# Study objective
+
+Equipercentile equating method vs. calibration projection method
+
+* compare performance in producing corresponding $\theta$ values
+* varied correlation between the constructs underlying each scale
+
+# Method: Item parameters
+
+Derived from PROMIS Depression - CES-D dataset in `PROsetta`
+
+* includes 731 response rows and 48 items
+* (after removing missing data)
+* 20 items on scale $a$ (CES-D scale)
+* 28 items on scale $b$ (PROMIS Depression scale)
+
+# Method: Item parameters
+
+1D IRT model was fitted on the dataset
+
+* graded response model for all items
+
+<br>
+
+Obtained 1D parameters were converted to 2D parameters
+
+* to be used in response data generation
+
+* CES-D items were loaded onto dimension 1
+* PROMIS items were loaded onto dimension 2
+
+# Method: Simulee & response data
+
+1000 2D $\theta$ values were sampled from MVN with specified correlation
+
+<br>
+
+Response dataset $\mathbf{X}$ was generated from item parameters and 2D theta values
+
+```{r, echo = FALSE, code = readLines("sim_get_data.R")}
+```
+
+# Method: EQP
+
+Equipercentile method was performed on $\mathbf{X}$
+
+* smoothing was not applied
+* since obtaining $\theta$ values from equipercentile method requires item parameters, item parameters were estimated by performing free calibration on $\mathbf{X}$
+
+```{r, echo = FALSE, code = readLines("sim_perform_EQP.R")}
+```
+
+# Method: CP
+
+Calibrated projection method was performed on $\mathbf{X}$
+
+* used 2D model
+* factor 1: 20 CES-D items
+* factor 2: 28 PROMIS items
+* latent correlation: free estimation with upper bound of .999
+* to avoid singular structure errors
+
+```{r, echo = FALSE, code = readLines("sim_perform_CP.R")}
+```
+
+# Method: 1D pattern scoring
+
+* used 1D item parameters for 48 items obtained for performing EQP as basis
+* used PROMIS item parameters to obtain EAP estimates from the PROMIS part of $\mathbf{X}$
+* to serve as reference
+
+# Performance criteria
+
+From $\mathbf{X}$, CES-D raw score was computed for each simulee
+
+* CES-D raw score was mapped to PROMIS $\theta$ with the crosswalk table from CP or EQP
+* produced PROMIS $\theta$ was compared to true PROMIS $\theta$
+* used RMSE
+
+# Simulation
+
+* factor correlation was $0.95(-0.05)0.50$
+* repeated 20 trials each
+
+# Results
+
+```{r, echo = FALSE, code = readLines("sim_results.R"), fig.width = 7, fig.align = 'center', dev.args = list(bg = "transparent")}
+```
+
+# Discussion
+
+Calibrated projection explicitly accounts for latent correlation between measured constructs
+
+* CP provides better crosswalk table
+
+* since CP uses multidimensional modeling, CP can equate more than two scales simultaneously
+
+* technical issue: multidimensional integration is time-consuming
+
+# References

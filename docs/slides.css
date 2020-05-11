@@ -1,0 +1,100 @@
+.reveal .sourceCode.r .kw, .sourceCode.r .er, .sourceCode.r .cf {
+  font-weight: normal;
+}
+
+.reveal .sourceCode.r .co {
+  font-style: normal;
+}
+
+.reveal .slides {
+  text-align: inherit;
+}
+
+.reveal .slide.level2 h1 {
+  font-size: 48px;
+}
+
+.reveal table {
+  border-style: none;
+}
+
+.reveal table th {
+  border-style: none none solid;
+  border-color: #eee;
+  border-width: 2px;
+}
+
+.reveal table td {
+  border-style: none;
+}
+
+.reveal, .reveal h1, .reveal h2, .reveal h3 {
+  color: #bbb;
+}
+
+.reveal h1 {
+  font-family: inherit;
+  font-weight: bold;
+  text-shadow: none;
+  font-size: 1.5em;
+}
+
+.reveal h2, .reveal h3 {
+  font-family: inherit;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.reveal h2.author {
+  font-size: 1em;
+}
+
+.reveal p {
+  line-height: 1.7;
+  margin: 0;
+}
+
+.reveal li {
+  line-height: 1.7;
+}
+
+.reveal section img {
+  background: rgba(255, 255, 255, 0.0);
+  border: 0 solid #eee;
+  filter: invert(100%);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.15);
+}
+
+.reveal sub {
+  font-size: 80%;
+  line-height: 0;
+}
+
+.reveal pre {
+  margin: 0px auto;
+  font-size: 0.75em;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.3)
+}
+
+.reveal .slide-number {
+  font-family: inherit;
+  font-size: 1em;
+  color: #bbb;
+  background-color: transparent;
+  right: 5vw;
+  bottom: 5vh;
+}
+
+.reveal .slide-number-delimiter {
+  margin: 0 0.25em;
+}
+
+.reveal .controls {
+  visibility: hidden;
+}
+
+code::-webkit-scrollbar {
+    width: 0 !important;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+}

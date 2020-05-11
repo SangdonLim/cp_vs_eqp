@@ -1,0 +1,10 @@
+source(file.path(root, "module/module_grid.r"))
+source(file.path(root, "module/module_calcLevelProb.r"))
+source(file.path(root, "module/module_LWrecursion.r"))
+source(file.path(root, "module/module_LtoEAP.r"))
+source(file.path(root, "module/module_EAPtoTABLE.r"))
+
+source(file.path(root, "demo/CP_demo_read.r"))
+source(file.path(root, "demo/CP_demo_LW.r"))
+source(file.path(root, "demo/CP_demo_EAP.r"))
+source(file.path(root, "demo/CP_demo_table.r"))

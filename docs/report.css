@@ -1,0 +1,61 @@
+/* toc float */
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+  background-color: #333;
+  border-color: #333;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 1em !important;
+}
+
+.tocify-subheader {
+  text-indent: 10px;
+}
+
+.tocify-subheader .tocify-subheader {
+  text-indent: 10px;
+}
+
+/* font sizes */
+
+h1.title, h1, h2, h3 {
+  font-size: 24px;
+}
+
+.author {
+  font-size: inherit;
+  font-style: italic;
+}
+
+ol[style="list-style-type: lower-alpha"] > li {
+  font-weight: bold;
+}
+
+/* spacing */
+
+body {
+  line-height: 1.8;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+/* styling for content elements */
+
+.section > ul > li {
+  /* color: blue; */
+}
+
+.Rtable1 td {
+  text-align: right;
+}
+
+.Rtable1 table, table.Rtable1 {
+  font-family: inherit;
+  font-size: inherit;
+  width: 100%;
+}
+
+
