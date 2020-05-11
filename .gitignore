@@ -1,0 +1,11 @@
+.Rproj.user/*
+docs/report_cache/*
+docs/report_files/*
+docs/slides_cache/*
+docs/slides_files/*
+*.zip
+*.log
+.RData
+.Rhistory
+.Rproj.user
+.DS_Store
