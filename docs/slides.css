@@ -94,7 +94,13 @@
 }
 
 code::-webkit-scrollbar {
-    width: 0 !important;
-    overflow: -moz-scrollbars-none;
-    -ms-overflow-style: none;
+  width: 0 !important;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
 }
+
+.reveal .csl-entry {
+  font-size: 80%;
+  margin-bottom: 1em;
+}
+

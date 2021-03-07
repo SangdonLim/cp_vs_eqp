@@ -30,19 +30,25 @@ root <- rprojroot::find_rstudio_root_file()
 
 *Scale linking* vs *Score equating*
 
+* a *scale* is an instrument composed of multiple items
+* a *score* is a value that quantifies responses to an instrument
+  * raw score
+  * T-score
+  * $\theta$
+
 # Scale linking
 
-*Scale linking* is achieved when
+*Scale link* is achieved when
 
-* a set of item parameters $z$
-* is on the same metric of
-* another set of anchor item parameters $z'$
+* a set of item parameters $\xi$
+* is on the same metric with
+* another set of anchor item parameters $\xi'$
 
 </br>
 
 Notation
 
-$z$ : the set of item parameters (e.g. discrimination, difficulty, ...)
+$\xi$ : the set of item parameters (e.g. difficulty, ...)
 
 # Scale linking
 
@@ -54,7 +60,7 @@ Suppose we have a response dataset $\mathbf{X}$ with
 
 Through item parameter calibration on $\mathbf{X}$, we can obtain
 
-* item parameters $z_a$ for items $a_1 ... a_{10}$
+* item parameters $\xi_a$ for items $a_1 ... a_{10}$
 
 # Scale linking
 
@@ -63,18 +69,18 @@ Suppose we have another dataset $\mathbf{X'}$ with
 * items $a_1 ... a_{10}$ from scale $a$
 * items $b_1 ... b_{10}$ from scale $b$
 
-Let the item parameters from this dataset be denoted by $z'_a$ and $z'_b$
+Let the item parameters from this dataset be denoted by $\xi'_a$ and $\xi'_b$
 
-Without conversion, $z'_a$ is on a different metric compared to $z_a$
+Without conversion, $\xi'_a$ is on a different metric compared to $\xi_a$
 
 * because $\mathbf{X'}$ comes from a different ability range compared to $\mathbf{X}$
 
 # Scale linking
 
-Scale linking is achieved when $z'_a$ is on the same metric of $z_a$
+Scale link is achieved when $\xi'_a$ is on the same metric with $\xi_a$
 
-* this makes $z'_a$ comparable with $z_a$
-* this makes $z'_b$ interpretable on the metric of $z_b$ as if it was from $\mathbf{X}$
+* this makes $\xi'_a$ comparable to $\xi_a$
+* this makes $\xi'_b$ from $\mathbf{X'}$ interpretable on the (unobtainable) metric of $\xi_b$ as if it was from $\mathbf{X}$
 
 # Scale linking
 
@@ -82,8 +88,8 @@ Scale linking methods include
 
 *Linear transformation*
 
-* find a function $f: z' \rightarrow z$ that converts $z'_a$ to the metric of $z_a$
-* once $f$ is determined, $f$ can be used to convert $z'_b$ to $z_b$
+* find a function $f: \xi' \rightarrow \xi$ that converts $\xi'_a$ to the metric of $\xi_a$
+* once $f$ is determined, $f$ can be used to convert $\xi'_b$ to $\xi_b$
 * Haebara method [-@haebara_equating_1980]
 * Stocking-Lord method [-@stocking_developing_1983]
 
@@ -94,8 +100,8 @@ Scale linking methods include
 *Fixed-parameter calibration*
 
 * Item calibration phase on $\mathbf{X'}$ is modified
-* $z' = \{z'_a, z'_b\}$ is estimated subject to the constraint $z'_a = z_a$
-* $z' = \{z'_a, z'_b\}$ is obtained so that $z'_a$ is on the same metric of $z_a$
+* $\xi' = \{\xi'_a, \xi'_b\}$ is estimated subject to the constraint $\xi'_a = \xi_a$
+* $\xi' = \{\xi'_a, \xi'_b\}$ is obtained so that $\xi'_a$ is on the same metric with $\xi_a$
 * This achieves scale link
 * Further metric conversions should not be done
 * Because further altering the metric breaks link
@@ -104,9 +110,8 @@ Scale linking methods include
 
 *Score equating* is achieved when
 
-* a set of score levels on a scale
-* is mapped to corresponding score levels
-* on the metric of the score levels on another scale
+* a set of score levels for one scale
+* is mapped to corresponding score levels on another scale
 
 # Score equating
 
@@ -123,14 +128,14 @@ Scores $x_a$ and $x_b$ are on different metrics
 
 Given a score $x_a = 5$
 
-* one may define a corresponding score $x'_b$ on scale $b$
-* so that $x'_b$ can be compared with $x_b$
+* one may define a corresponding score level $\hat{x}_b$ on instrument $b$
+* so that $\hat{x}_b$ can be compared to $x_b$ in the same metric
 
 <br>
 
 Score equating is the process of determining
 
-* the map $f: x_a \rightarrow x'_b$ for all $x_a$ levels
+* the map $f: x_a \rightarrow \hat{x}_b$ for all $x_a$ levels
 
 # Score equating
 
@@ -138,7 +143,7 @@ Equipercentile equating is a method of score equating
 
 * scores of scale $a$ are mapped onto the percentile $p$ metric
 * and then onto the metric of scale $b$
-* so that $x_a \rightarrow p \rightarrow x'_b$
+* so that $x_a \rightarrow p \rightarrow \hat{x}_b$
 
 The process does not involve item parameters
 
@@ -154,7 +159,7 @@ Equipercentile equating may be modified to get standardized scores
 
 To accomplish this,
 
-* scale $b$ scores are mapped onto the $\theta$ metric
+* scale $b$ scores are first mapped onto the $\theta$ metric
 * using a presupplied set of item parameters for scale $b$
 * the item parameters may be obtained from free calibration or converted with scale linking as needed
 
@@ -204,14 +209,14 @@ A 2-factor IRT model is fitted onto the response dataset $\mathbf{X}$
 
 # Calibrated projection
 
-```{r eval = FALSE}
+```{r, eval = FALSE}
 model <- mirt.model("
   F1  =  1-10  # free estimation for scale a items
   F2  = 11-20  # free estimation for scale b items
   COV = F1*F2
 ")
 
-cp_calib <- mirt(X, model, itemtype = 'graded')
+cp_calib <- mirt(X, model, itemtype = "graded")
 ```
 
 First discrimination parameter
@@ -243,8 +248,8 @@ In @thissen_using_2011, the authors presented a table
 
 Table 4 @thissen_using_2011
 
-```{r, echo = FALSE, fig.align = 'center', dev.args = list(bg = "transparent")}
-d  <- read.csv(file.path(root, "final/table4.csv"))
+```{r, echo = FALSE, fig.align = "center", dev.args = list(bg = "transparent")}
+d  <- read.csv(file.path(root, "data/table4.csv"))
 x  <- d[, 1]
 y  <- d[, 2]
 yu <- d[, 2] + d[, 3]
@@ -264,10 +269,10 @@ lines(x, yl, col = "magenta", lty = 2)
 
 Table 4 (reproduced)
 
-```{r lw_demo_all, echo = FALSE, cache = TRUE, code = readLines("CP_demo_all.R")}
+```{r, cp_demo_all, echo = FALSE, cache = TRUE, code = readLines(file.path(root, "demo/CP_demo_all.r"))}
 ```
 
-```{r, echo = FALSE, fig.align = 'center', dev.args = list(bg = "transparent")}
+```{r, echo = FALSE, fig.align = "center", dev.args = list(bg = "transparent")}
 d  <- out
 x  <- d[, 1]
 y  <- d[, 2]
@@ -288,7 +293,7 @@ lines(x, yl, col = "magenta", lty = 2)
 
 Step 1. Read in item parameters
 
-```{r lw_demo_data, echo = TRUE, code = readLines("CP_demo_read.R")}
+```{r, cp_demo_data, echo = TRUE, code = readLines(file.path(root, "demo/CP_demo_read.r"))}
 ```
 
 * Tables 2, 3 from @thissen_using_2011
@@ -297,7 +302,7 @@ Step 1. Read in item parameters
 
 Step 2. Initialize theta grid for multidimensional integration
 
-```{r lw_demo_grid, echo = TRUE, code = readLines("grid.R")}
+```{r, cp_demo_grid, echo = TRUE, code = readLines(file.path(root, "module/module_grid.r"))}
 ```
 
 * Used -4.5(0.2)4.5 for each dimension, fully crossed
@@ -308,7 +313,7 @@ Step 2. Initialize theta grid for multidimensional integration
 
 Step 3. Function for getting category probability
 
-```{r lw_demo_calcprob, echo = TRUE, code = readLines("calcLevelProb.R")}
+```{r, cp_demo_calcprob, echo = TRUE, code = readLines(file.path(root, "module/module_calcLevelProb.r"))}
 ```
 
 * input: item pool, 2D $\theta$, item ID, score level on that item
@@ -319,7 +324,7 @@ Step 3. Function for getting category probability
 
 Step 4. Lord-Wingersky recursion (multidimensional extension)
 
-```{r lw_demo, echo = TRUE, code = readLines("LWrecursion.R")}
+```{r, cp_demo_lw, echo = TRUE, code = readLines(file.path(root, "module/module_LWrecursion.r"))}
 ```
 
 # Calibrated projection
@@ -329,7 +334,7 @@ Step 4. Lord-Wingersky recursion (multidimensional extension)
 * input: item pool, items to use, theta grid
 * output: for each possible score level, likelihood value of obtaining the score level at each quadrature point
 
-```{r lw_demo_run, echo = TRUE, cache = TRUE, code = readLines("CP_demo_LW.R")}
+```{r, cp_demo_lw_run, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "demo/CP_demo_LW.r"))}
 ```
 
 Use PedsQL items
@@ -347,7 +352,7 @@ Step 5. Compute EAP estimates from likelihoods
 * input: likelihoods, theta grid, latent correlation
 * output: EAP estimates and covariance matrix for each score level
 
-```{r lw_demo_eap, echo = TRUE, code = readLines("LtoEAP.R")}
+```{r, lw_demo_eap, echo = TRUE, code = readLines(file.path(root, "module/module_LtoEAP.r"))}
 ```
 
 # Calibrated projection
@@ -356,7 +361,7 @@ Step 5. Compute EAP estimates from likelihoods
 
 * estimated correlation $.96$ is used here
 
-```{r lw_demo_eap_run, echo = TRUE, cache = TRUE, code = readLines("CP_demo_EAP.R")}
+```{r, lw_demo_eap_run, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "demo/CP_demo_EAP.r"))}
 ```
 
 # Calibrated projection
@@ -410,21 +415,21 @@ The summation is taken over all $\theta$ grid
 
 Step 6. Aggregate into a table
 
-```{r lw_demo_table, echo = TRUE, cache = TRUE, code = readLines("EAPtoTABLE.R")}
+```{r, lw_demo_table, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "module/module_EAPtoTABLE.r"))}
 ```
 
-```{r lw_demo_table_run, echo = TRUE, cache = TRUE, code = readLines("CP_demo_table.R")}
+```{r, lw_demo_table_run, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "demo/CP_demo_table.r"))}
 ```
 
 # Calibrated projection
 
 It should be emphasized that the focus of CP method is not the item parameters
 
-* focus is on the latent correlation and its use in producing a score map
+* focus is on the latent correlation and its use in producing the table
 
 The correlation between two factors represent the relationship between two scales
 
-* using this information, obtaining multidimensional EAP $\theta$ estimate yields $\theta$ estimate on scale $a$ and scale $b$ simulataneously
+* using this information, obtaining a multidimensional EAP $\theta$ estimate yields a $\theta$ estimate on scale $a$ and scale $b$ simultaneously
 
 # Motivation
 
@@ -481,7 +486,7 @@ Obtained 1D parameters were converted to 2D parameters
 
 Response dataset $\mathbf{X}$ was generated from item parameters and 2D theta values
 
-```{r, echo = FALSE, code = readLines("sim_get_data.R")}
+```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_get_data.r"))}
 ```
 
 # Method: EQP
@@ -491,7 +496,7 @@ Equipercentile method was performed on $\mathbf{X}$
 * smoothing was not applied
 * since obtaining $\theta$ values from equipercentile method requires item parameters, item parameters were estimated by performing free calibration on $\mathbf{X}$
 
-```{r, echo = FALSE, code = readLines("sim_perform_EQP.R")}
+```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_perform_EQP.r"))}
 ```
 
 # Method: CP
@@ -502,22 +507,22 @@ Calibrated projection method was performed on $\mathbf{X}$
 * factor 1: 20 CES-D items
 * factor 2: 28 PROMIS items
 * latent correlation: free estimation with upper bound of .999
-* to avoid singular structure errors
+* to avoid singular structures
 
-```{r, echo = FALSE, code = readLines("sim_perform_CP.R")}
+```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_perform_CP.r"))}
 ```
 
 # Method: 1D pattern scoring
 
 * used 1D item parameters for 48 items obtained for performing EQP as basis
 * used PROMIS item parameters to obtain EAP estimates from the PROMIS part of $\mathbf{X}$
-* to serve as reference
+* to serve as best-case reference
 
 # Performance criteria
 
 From $\mathbf{X}$, CES-D raw score was computed for each simulee
 
-* CES-D raw score was mapped to PROMIS $\theta$ with the crosswalk table from CP or EQP
+* CES-D raw score was mapped to PROMIS $\theta$ using the crosswalk table from CP or EQP
 * produced PROMIS $\theta$ was compared to true PROMIS $\theta$
 * used RMSE
 
@@ -528,7 +533,7 @@ From $\mathbf{X}$, CES-D raw score was computed for each simulee
 
 # Results
 
-```{r, echo = FALSE, code = readLines("sim_results.R"), fig.width = 7, fig.align = 'center', dev.args = list(bg = "transparent")}
+```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_results.r")), fig.width = 7, fig.align = "center", dev.args = list(bg = "transparent")}
 ```
 
 # Discussion
