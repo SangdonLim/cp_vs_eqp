@@ -15,4 +15,4 @@ The calibrated projection module used in this project was later implemented into
 
 The simulation design in this project also made its way into a publication:
 
-> Schalet, B. D., Lim, S., Cella, D., Choi, S. W. (2021). Linking scores with patient-reported health outcome instruments: A validation study and comparison of three linking methods. *Psychometrika*. Advance online publication. https://doi.org/10.1007/s11336-021-09776-z
+> Schalet, B. D., Lim, S., Cella, D., Choi, S. W. (2021). Linking scores with patient-reported health outcome instruments: A validation study and comparison of three linking methods. *Psychometrika, 86*(3), 717-746. https://doi.org/10.1007/s11336-021-09776-z
