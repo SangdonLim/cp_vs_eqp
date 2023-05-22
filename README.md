@@ -10,6 +10,17 @@ See the report and slides here:
 - https://sangdonlim.github.io/cp_vs_eqp/report.html (report)
 - https://sangdonlim.github.io/cp_vs_eqp/slides.html (slides)
 
+These are also avilable in the `docs` folder.
+
+The folders contain the following files:
+- `data`: includes the input tables used in the report to demonstrate the implementation of calibrated projection method. Also includes item parameters used for the main simulation.
+- `demo`: includes scripts used to demonstrate calibrated projection method. These make use of modules contained in the `modules` folder.
+- `docs`: contains the report and the slide deck.
+- `example`: contains an example script for running calibrated projection.
+- `module`: includes an implementation of calibrated projection.
+- `results`: includes raw output data from the main simulation.
+- `simulation`: includes scripts for the main simulation.
+
 The calibrated projection module used in this project was later implemented into an R package:
 > PROsetta 0.2.0 - [CRAN link](https://CRAN.R-project.org/package=PROsetta)
 
