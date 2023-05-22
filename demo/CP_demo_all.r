@@ -1,5 +1,5 @@
 source(file.path(root, "module/module_grid.r"))
-source(file.path(root, "module/module_calcLevelProb.r"))
+source(file.path(root, "module/module_computeResponseProbability.r"))
 source(file.path(root, "module/module_LWrecursion.r"))
 source(file.path(root, "module/module_LtoEAP.r"))
 source(file.path(root, "module/module_EAPtoTABLE.r"))

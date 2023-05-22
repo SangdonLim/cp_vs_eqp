@@ -1,3 +1,6 @@
+# simulation/make_item_parameters.r
+# obtain item parameters to use in simulation
+
 library(PROsetta)
 
 root <- rprojroot::find_rstudio_root_file()

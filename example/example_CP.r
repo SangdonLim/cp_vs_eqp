@@ -1,5 +1,7 @@
+# Example code for running calibrated projection -------------------------------
+
 source("module/module_grid.r")
-source("module/module_calcLevelProb.r")
+source("module/module_computeResponseProbability.r")
 source("module/module_LWrecursion.r")
 source("module/module_LtoEAP.r")
 source("module/module_EAPtoTABLE.r")

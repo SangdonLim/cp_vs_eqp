@@ -1,3 +1,6 @@
+# module/module_EAPtoTABLE.r
+# function for converting EAP estimates into a table
+
 EAPtoTABLE <- function(EAP, dimension, tscore) {
 
   eap  <- lapply(EAP, function(x) x$EAP[dimension])
@@ -8,9 +11,10 @@ EAPtoTABLE <- function(EAP, dimension, tscore) {
     eap <- (eap*10) + 50
     se  <- se*10
   }
-  x    <- as.numeric(names(eap))
-  out  <- cbind(x, eap, se)
+  x <- as.numeric(names(eap))
+  o <- cbind(x, eap, se)
+  o <- as.data.frame(o)
 
-  return(out)
+  return(o)
 
 }

@@ -1,3 +1,7 @@
+# module/module_LtoEAP.r
+# converts likelihoods obtained from Lord-Wingersky recursion
+# into two-dimensional EAP estimates
+
 LtoEAP <- function(L, theta_grid, sigma) {
 
   nd  <- dim(theta_grid)[2]

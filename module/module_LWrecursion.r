@@ -1,3 +1,7 @@
+# module/module_LWrecursion.r
+# function for performing Lord-Wingersky recursion
+# this obtains likelihoods of each score level over quadrature points
+
 LWrecursion <- function(itempool, use_items, theta_grid) {
 
   L_init <- TRUE
@@ -10,7 +14,7 @@ LWrecursion <- function(itempool, use_items, theta_grid) {
     P <- list()
     for (v in new_possible_values) {
       P[[as.character(v)]] <-
-        calcLevelProb(itempool, theta_grid, item_idx, v)
+        computeResponseProbability(itempool, theta_grid, item_idx, v)
     }
 
     if (L_init) {

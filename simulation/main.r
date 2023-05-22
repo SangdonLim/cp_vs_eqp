@@ -1,3 +1,6 @@
+# simulation/main.r
+# main simulation script
+
 library(mvnfast)
 library(mirt)
 library(parallel)
@@ -11,16 +14,16 @@ registerDoParallel(cl)
 root <- rprojroot::find_rstudio_root_file()
 
 source(file.path(root, "module/module_grid.r"))
-source(file.path(root, "module/module_calcLevelProb.r"))
+source(file.path(root, "module/module_computeResponseProbability.r"))
 source(file.path(root, "module/module_LWrecursion.r"))
 source(file.path(root, "module/module_LtoEAP.r"))
 source(file.path(root, "module/module_EAPtoTABLE.r"))
 
-source(file.path(root, "sim/sim_get_ipar.r"))
-source(file.path(root, "sim/sim_get_data.r"))
-source(file.path(root, "sim/sim_perform_EQP.r"))
-source(file.path(root, "sim/sim_perform_CP.r"))
-source(file.path(root, "sim/sim_eval_table.r"))
+source(file.path(root, "simulation/make_item_parameters.r"))
+source(file.path(root, "simulation/generate_data.r"))
+source(file.path(root, "simulation/perform_EQP.r"))
+source(file.path(root, "simulation/perform_CP.r"))
+source(file.path(root, "simulation/evaluate_performance.r"))
 
 cesd_items <- 29:48
 
@@ -52,7 +55,7 @@ out <- foreach(
   )[, 1]
 
   table_EQP <- table_EQP$eq_conc
-  table_out <- eval_table(X, table_EQP, table_CP, pattern_1D)
+  table_out <- evaluate_performance(X, table_EQP, table_CP, pattern_1D)
 
   fn <- sprintf("out_%s_%s.csv", true_corr, idx_trial)
 

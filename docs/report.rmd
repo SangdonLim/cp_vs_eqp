@@ -8,7 +8,6 @@ output:
     toc_float:
       collapsed: false
       smooth_scroll: false
-    code_folding: hide
     css: report.css
 editor_options:
   chunk_output_type: console
@@ -62,7 +61,7 @@ Equipercentile equating may be modified to produce standardized scores, such as 
 
 Score equating methods often aim to produce a crosswalk table (Table \@ref(tab:table1)).
 
-```{r, table1}
+```{r, table1, echo = FALSE}
 scaleb <- (0:10) * 9.1 + 5
 tscore <- log((0:10) + 5)*20+10
 theta  <- (tscore - 50) / 10
@@ -101,12 +100,12 @@ A two-dimensional theta grid was created by crossing $\theta = -4.5(0.2)4.5$, to
 
 This created a total of `r n_grid` quadrature points over two-dimensional space.
 
-A function `calcLevelProb()` was created to obtain the response probability for a specified item and a specified response category, given a two-dimensional $\theta$ vector. This is necessary to implement the multidimensional extension of Lord-Wingersky algorithm.
+A function `computeResponseProbability()` was created to obtain the response probability for a specified item and a specified response category, given a two-dimensional $\theta$ vector. This is necessary to implement the multidimensional extension of Lord-Wingersky algorithm.
 
-```{r, cp_demo_calcprob, echo = TRUE, code = readLines(file.path(root, "module/module_calcLevelProb.r"))}
+```{r, cp_demo_computeResponseProbability, echo = TRUE, code = readLines(file.path(root, "module/module_computeResponseProbability.r"))}
 ```
 
-An example output of `calcLevelProb()` is shown below. For item 10 with the following item parameters,
+An example output of `computeResponseProbability()` is shown below. For item 10 with the following item parameters,
 
 ```{r}
 item_idx <- 10
@@ -118,7 +117,7 @@ the probability of obtaining a score of 3 on the polytomous item for a $\theta =
 ```{r}
 score <- 3
 theta <- matrix(c(0, 0), 1, 2)
-calcLevelProb(itempool, theta, item_idx, score)
+computeResponseProbability(itempool, theta, item_idx, score)
 ```
 
 Multidimensional Lord-Wingersky recursion was implemented as follows. The function `LWrecursion()` returns likelihood values $\mathrm{L}(x|\theta)$ at each grid point $\theta$, for each possible score level $x = 0, 1, ...$. Correlation between the two dimensions is not used at this stage.
@@ -126,7 +125,7 @@ Multidimensional Lord-Wingersky recursion was implemented as follows. The functi
 ```{r, cp_demo_lw, echo = TRUE, code = readLines(file.path(root, "module/module_LWrecursion.r"))}
 ```
 
-Then, the recursion was performed to obtain the likelihood values at each $\theta$ grid point, for 11 items of PedsQL scale (items 18 - 28). The score levels ranged from 0 to 44.
+Then, the recursion was performed to obtain the likelihood values at each $\theta$ grid point, for 11 items of PedsQL scale (items 18 - 28). These items had non-zero $a$-parameters on dimension 2 (PedsQL dimension), and zeroes on dimension 1 (PAIS dimension). The score levels ranged from 0 to 44.
 
 ```{r, cp_demo_lw_run, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "demo/CP_demo_LW.r"))}
 ```
@@ -155,6 +154,14 @@ where $\mathrm{C}(\theta)$ is variance-covariance matrix $(\theta - \theta_\math
 ```{r cp_demo_eap_run, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "demo/CP_demo_EAP.r"))}
 ```
 
+This contains two-dimensional EAP estimates for each possible score levels in the range 0 - 44. An example is given below:
+
+```{r}
+EAP["10"]
+```
+
+This means that a score of `10` in the PedsQL scale (11 items, score range 0 - 44) corresponds to an EAP theta estimate of `r EAP[["10"]]$EAP[1]` in the first dimension (PAIS dimension), and `r EAP[["10"]]$EAP[2]` in the second dimension (PedsQL dimension).
+
 Finally, the estimates for the first dimension (reflecting PAIS construct) are aggregated into a table. A graphical representation of the reproduced table is displayed in Figure \@ref(fig:fig1).
 
 ```{r cp_demo_table, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "module/module_EAPtoTABLE.r"))}
@@ -164,6 +171,8 @@ Finally, the estimates for the first dimension (reflecting PAIS construct) are a
 ```
 
 ```{r fig1, fig.align = "center", fig.height = 7, fig.retina = 3, dev.args = list(bg = "transparent"), fig.cap = "Graphical representation of PedsQL - PAIS crosswalk table. Dotted lines represent standard errors."}
+# draw a figure comparing origin data and reproduced data
+
 d  <- read.csv(file.path(root, "data/table4.csv"))
 x  <- d[, 1]
 y  <- d[, 2]
@@ -179,9 +188,9 @@ lines(x, y , col = "red")
 lines(x, yu, col = "red", lty = 2)
 lines(x, yl, col = "red", lty = 2)
 
-lines(out[, 1], out[, 2] , col = "blue")
-lines(out[, 1], out[, 2] + out[, 3], col = "blue", lty = 2)
-lines(out[, 1], out[, 2] - out[, 3], col = "blue", lty = 2)
+lines(o$x, o$eap , col = "blue")
+lines(o$x, o$eap + o$se, col = "blue", lty = 2)
+lines(o$x, o$eap - o$se, col = "blue", lty = 2)
 
 legend("topleft",
   c("Thissen, et al. (2011)", "Reproduced"),
@@ -212,14 +221,14 @@ The response dataset from PROMIS Depression - CES-D scales in *PROsetta* package
 
 First, a one dimensional IRT model was fitted on the dataset to obtain item parameters. Graded response model was used for all items. Then, the obtained item parameters were converted to two-dimensional item parameters to be used in response data generation. CES-D items were loaded onto dimension 2, and PROMIS items were loaded onto dimension 1.
 
-```{r sim_ipar, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "sim/sim_get_ipar.r"))}
+```{r simulation_make_item_parameters, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "simulation/make_item_parameters.r"))}
 ```
 
 ## Simulee & response data
 
 In each trial, 1000 two-dimensional $\theta$ values were sampled from the multivariate normal distribution with the specified correlation. Response dataset $\mathbf{X}$ was generated from the item parameters and the $\theta$ values.
 
-```{r sim_get_data, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "sim/sim_get_data.r"))}
+```{r simulation_generate_data, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "simulation/generate_data.r"))}
 ```
 
 ## Score equating
@@ -230,14 +239,14 @@ Score equating methods were performed as follows.
 
 Equipercentile method was performed on the response dataset $\mathbf{X}$. Smoothing was not applied. Because obtaining $\theta$ values from equipercentile method requires item parameters, item parameters were estimated by performing free calibration on $\mathbf{X}$. A one-dimensional model was used for this purpose.
 
-```{r sim_eqp, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "sim/sim_perform_EQP.r"))}
+```{r simulation_eqp, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "simulation/perform_EQP.r"))}
 ```
 
 ### Calibrated projection
 
 Calibrated projection method was performed on the response dataset $\mathbf{X}$. A two-factor model was used, where CES-D items (items 29 - 48) were loaded onto dimension 2, and PROMIS items (items 1 - 28) were loaded onto dimension 1. Correlation between the two factors was freely estimated, subject to upper bound of .999. The upper bound was imposed to avoid the latent structure being singular.
 
-```{r sim_cp, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "sim/sim_perform_CP.r"))}
+```{r simulation_cp, echo = TRUE, cache = TRUE, code = readLines(file.path(root, "simulation/perform_CP.r"))}
 ```
 
 ### One-dimensional pattern scoring
@@ -246,11 +255,11 @@ One-dimensional pattern scoring was performed on the PROMIS portion of response 
 
 ## Performance criteria
 
-For each trial, CES-D raw scores were computed from the generated $\mathbf{X}$. Using the two crosswalk tables from equipercentile equating and calibrated projection, the raw scores were converted to their respective $\theta$ estimates for PROMIS construct. The difference between the converted $\theta$ and the true PRMIS $\theta$ was used to compute RMSE values.
+For each trial, CES-D raw scores were computed from the generated $\mathbf{X}$. Using the two crosswalk tables from equipercentile equating and calibrated projection, the raw scores were converted to their respective $\theta$ estimates for PROMIS construct. The difference between the converted $\theta$ and the true PROMIS $\theta$ was used to compute RMSE values.
 
 # Result & Discussion
 
-```{r fig2, echo = FALSE, code = readLines(file.path(root, "sim/sim_results.r")), fig.height = 7, fig.align = "center", fig.retina = 3, dev.args = list(bg = "transparent"), fig.cap = "Performance of equipercentile equating and calibrated projection across correlation levels."}
+```{r fig2, echo = FALSE, code = readLines(file.path(root, "simulation/plot_results.r")), fig.height = 7, fig.align = "center", fig.retina = 3, dev.args = list(bg = "transparent"), fig.cap = "Performance of equipercentile equating and calibrated projection across correlation levels."}
 ```
 
 In Figure \@ref(fig:fig2), the performance of calibration projection was similar to equipercentile equating in higher correlation levels. Calibration projection method performed better than equipercentile equating as correlation between the factors decreased.

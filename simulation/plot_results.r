@@ -1,3 +1,6 @@
+# simulation/plot_results.r
+# draws a plot showing the results
+
 library(stringr)
 
 root <- rprojroot::find_rstudio_root_file()

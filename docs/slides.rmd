@@ -273,7 +273,7 @@ Table 4 (reproduced)
 ```
 
 ```{r, echo = FALSE, fig.align = "center", dev.args = list(bg = "transparent")}
-d  <- out
+d  <- o
 x  <- d[, 1]
 y  <- d[, 2]
 yu <- d[, 2] + d[, 3]
@@ -292,6 +292,8 @@ lines(x, yl, col = "magenta", lty = 2)
 # Calibrated projection
 
 Step 1. Read in item parameters
+
+(code blocks are scrollable)
 
 ```{r, cp_demo_data, echo = TRUE, code = readLines(file.path(root, "demo/CP_demo_read.r"))}
 ```
@@ -313,7 +315,7 @@ Step 2. Initialize theta grid for multidimensional integration
 
 Step 3. Function for getting category probability
 
-```{r, cp_demo_calcprob, echo = TRUE, code = readLines(file.path(root, "module/module_calcLevelProb.r"))}
+```{r, cp_demo_computeresponseprobability, echo = TRUE, code = readLines(file.path(root, "module/module_computeResponseProbability.r"))}
 ```
 
 * input: item pool, 2D $\theta$, item ID, score level on that item
@@ -486,7 +488,7 @@ Obtained 1D parameters were converted to 2D parameters
 
 Response dataset $\mathbf{X}$ was generated from item parameters and 2D theta values
 
-```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_get_data.r"))}
+```{r, echo = FALSE, code = readLines(file.path(root, "simulation/generate_data.r"))}
 ```
 
 # Method: EQP
@@ -496,7 +498,7 @@ Equipercentile method was performed on $\mathbf{X}$
 * smoothing was not applied
 * since obtaining $\theta$ values from equipercentile method requires item parameters, item parameters were estimated by performing free calibration on $\mathbf{X}$
 
-```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_perform_EQP.r"))}
+```{r, echo = FALSE, code = readLines(file.path(root, "simulation/perform_EQP.r"))}
 ```
 
 # Method: CP
@@ -509,7 +511,7 @@ Calibrated projection method was performed on $\mathbf{X}$
 * latent correlation: free estimation with upper bound of .999
 * to avoid singular structures
 
-```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_perform_CP.r"))}
+```{r, echo = FALSE, code = readLines(file.path(root, "simulation/perform_CP.r"))}
 ```
 
 # Method: 1D pattern scoring
@@ -533,7 +535,7 @@ From $\mathbf{X}$, CES-D raw score was computed for each simulee
 
 # Results
 
-```{r, echo = FALSE, code = readLines(file.path(root, "sim/sim_results.r")), fig.width = 7, fig.align = "center", dev.args = list(bg = "transparent")}
+```{r, echo = FALSE, code = readLines(file.path(root, "simulation/plot_results.r")), fig.width = 7, fig.align = "center", dev.args = list(bg = "transparent")}
 ```
 
 # Discussion
